@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define TAM 20
+#define RANGE 2
+
+struct node {
+    char s;
+    int inicio;
+    int tama;
+    struct node *prox;
+};
+void gerarram( int *);
+void inserir(struct node *, struct node *);
+void mapear(int *, struct node *);
+void imprimirram(int *);
+void imprimirnodes(struct node *);
+int main(){
+    int ram[TAM];
+    struct node head;
+    head.prox = NULL;
+
+    gerarram(ram);
+
+    mapear(ram, &head);
+
+    puts("_________________________________________");
+    imprimirram(ram);
+    puts("\n_________________________________________");
+
+    imprimirnodes(&head);
+
+
+    return 0;
+}
+
+void gerarram( int *p){
+    srand(time(NULL));
+    for(int i =0; i < TAM; i++){
+        (rand()%2) ? (*(p + i) = 1) : (*(p + i) = 0);
+    }
+}
+
+//oque vai entrar e depois de que vai entrar
+void inserir(struct node *n, struct node *p){
+
+    n->prox = p->prox;
+    p->prox = n;
+}
+
+void mapear(int *pon, struct node *h){
+
+    struct node a, c;
+    struct node *b;
+    b = h;
+
+    a.inicio = 0;
+    a.tama = 1;
+    (*pon) ? (a.s = 'f') : (a.s = 'v');
+
+    for(int k = 1; k < TAM; k++){
+        if(*(pon + k) == *(pon + k - 1)){
+            a.tama ++;
+        }else {
+            inserir(&a, b);
+            b = b->prox;
+
+            a.inicio = k;
+            a.tama = 1;
+            (*(pon + k)) ? (a.s = 'f') : (a.s = 'v');
+
+        }
+    }
+
+    inserir(&a, b);
+}
+
+void imprimirram(int *r){
+    for(int k = 0; k < TAM ; k++){
+        printf("|%i ",*(r + k));
+    }
+}
+
+void imprimirnodes(struct node *p){
+    struct node *k;
+    for(k = p->prox; k != NULL; k = k->prox){
+        puts("\n------------------------");
+        printf("\n[%p] \nststus: %c \ninicio: %d \ntamanh0: %d \nproximo: [%p]", k, k->s, k->inicio, k->tama, k->prox);
+        puts("\n------------------------");
+    }
+}
