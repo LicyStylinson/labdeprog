@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#define TAM 20
-#define RANGE 2
 
 struct node {
     char s;
@@ -11,27 +9,40 @@ struct node {
     struct node *prox;
 };
 
-void gerarram( int *);
+void gerarram( int *, int);
 void criarnovo(struct node *);
-void mapear(int *, struct node *);
-void imprimirram(int *);
+void mapear(int *, int, struct node *);
+void imprimirram(int *, int);
 void imprimirnodes(struct node *);
 void inserir(struct node *);
-void ocuparramfirst(int *, int , struct node *);
+void ocuparramfirst(int , struct node *);
 void atualizarram( int *, struct node*);
 
-int main(){
+int main(int argc, char *argv[]){
 
-    int ram[TAM];
+    if(argc !=2){
+        printf("\nformato invalido! tente: './%s <range de memoria>'", *argv);
+        exit(1);
+    }
+
+    int tam = atoi(argv[1]);
+
+    int *ram;
+
+    if(!(ram = (int*)malloc(sizeof(int)*tam))){
+        puts("\nmemoria indisponivel!");
+        exit(2);
+    }
+
     struct node head, vazio;
     head.prox = &vazio;
 
-    gerarram(ram);
+    gerarram(ram, tam);
 
-    mapear(ram, &head);
+    mapear(ram, tam, &head);
 
     puts("\n____________________________________________________________");
-    imprimirram(ram);
+    imprimirram(ram, tam);
     puts("\n____________________________________________________________");
 
     //imprimirnodes(&head);
@@ -41,24 +52,25 @@ int main(){
         puts("digite quantos espacos precisa ocupar: ");
         scanf("%i", &n );
         if(n){
-            ocuparramfirst(ram, n, &head);
+            ocuparramfirst(n, &head);
             atualizarram(ram, &head);
 
             puts("\n____________________________________________________________");
-            imprimirram(ram);
+            imprimirram(ram, tam);
             puts("\n____________________________________________________________");
         }
     }
 
     //imprimirnodes(&head);
 
+    free(ram);
     return 0;
 }
 
-void gerarram( int *p){
+void gerarram( int *r, int t){
     srand(time(NULL));
-    for(int i =0; i < TAM; i++){
-        (rand()%2) ? (*(p + i) = 1) : (*(p + i) = 0);
+    for(int i =0; i < t; i++){
+        (rand()%2) ? (*(r + i) = 1) : (*(r + i) = 0);
     }
 }
 
@@ -81,17 +93,17 @@ void inserir(struct node *p){
 
 }
 
-void mapear(int *pon, struct node *h){
+void mapear(int *r, int t, struct node *h){
 
     struct node *b;
     b = h->prox;
 
     b->inicio = 0;
     b->tama = 1;
-    (*pon) ? (b->s = 'f') : (b->s = 'v');
+    (*r) ? (b->s = 'f') : (b->s = 'v');
 
-    for(int k = 1; k < TAM; k++){
-        if(*(pon + k) == *(pon + k - 1)){
+    for(int k = 1; k < t; k++){
+        if(*(r + k) == *(r + k - 1)){
             b->tama ++;
         }else {
             criarnovo(b);
@@ -99,15 +111,15 @@ void mapear(int *pon, struct node *h){
 
             b->inicio = k;
             b->tama = 1;
-            (*(pon + k)) ? ( b->s = 'f') : (b->s = 'v');
+            (*(r + k)) ? ( b->s = 'f') : (b->s = 'v');
 
         }
     }
 }
 
-void imprimirram(int *r){
+void imprimirram(int *r, int t){
 
-    for(int k = 0; k < TAM ; k++){
+    for(int k = 0; k < t ; k++){
         printf("|%d ",*(r + k));
     }
 }
@@ -121,7 +133,7 @@ void imprimirnodes(struct node *p){
     }
 }
 
-void ocuparramfirst(int *r, int u, struct node *p){
+void ocuparramfirst(int u, struct node *p){
 
     struct node *k;
     int cont = 0;
