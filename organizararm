@@ -18,12 +18,13 @@ void imprimirram(int *);
 void imprimirnodes(struct node *);
 void inserir(struct node *);
 void ocuparramfirst(int *, int , struct node *);
+void atualizarram( int *, struct node*);
 
 int main(){
 
     int ram[TAM];
-    struct node head, gi;
-    head.prox = &gi;
+    struct node head, vazio;
+    head.prox = &vazio;
 
     gerarram(ram);
 
@@ -41,12 +42,15 @@ int main(){
         scanf("%i", &n );
         if(n){
             ocuparramfirst(ram, n, &head);
+            atualizarram(ram, &head);
 
             puts("\n____________________________________________________________");
             imprimirram(ram);
             puts("\n____________________________________________________________");
         }
     }
+
+    //imprimirnodes(&head);
 
     return 0;
 }
@@ -120,6 +124,7 @@ void imprimirnodes(struct node *p){
 void ocuparramfirst(int *r, int u, struct node *p){
 
     struct node *k;
+    int cont = 0;
     for(k = p->prox; k != NULL; k = k->prox){
         if(k->s == 'v' & k->tama >= u){
 
@@ -132,21 +137,24 @@ void ocuparramfirst(int *r, int u, struct node *p){
             k->s = 'f';
             k->tama = u;
 
+            cont = 1;
             puts("\nmemoria alocada!");
             break;
-
-        }else {
-            puts("\nnao ha espacos disponiveis!");
-            break;
         }
-
     }
+    
+    if(!cont) puts("\nnao ha espacos disponiveis!");
+
+}
+
+void atualizarram( int *r, struct node*p){
 
     struct node *l;
     for(l = p->prox; l != NULL; l = l->prox){
 
-        for(int g = l->inicio ; g > (l->inicio + l->tama ); g++){
-        (l->s == 'f') ? ( *(r + g) = 1) : ( *(r + g) = 0);
+        for(int g = l->inicio ; g < (l->inicio + l->tama ); g++){
+
+            (l->s == 'f') ? ( *(r + g) = 1) : ( *(r + g) = 0);
 
         }
     }
